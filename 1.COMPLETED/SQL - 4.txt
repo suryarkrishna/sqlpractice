@@ -1,0 +1,155 @@
+1)	Display the ename and date of joining the service in the following format.
+                      SCOTT JUNE, THIRTEEN 1983
+
+SELECT ENAME || TO_CHAR(HIREDATE,'MONTH, DDSP YYYY') FROM EMP;
+	
+
+2)	Display the ename, hiredate and the then review date which is hiredate+1.
+
+SELECT ENAME, HIREDATE, HIREDATE+1 AS REVIEW_DATE FROM EMP;
+
+3)	Write a query to return the day of the week for any date entered in the format DD.MM.YYYY
+
+SELECT TO_CHAR(TO_DATE('&DATE','DD.MM.YYYY'), 'DY') FROM DUAL;
+
+4)	Write a query to calculate the length of the time any employee has been with the company.
+
+SELECT SYSDATE - HIREDATE DAYS
+FROM EMP;
+
+
+5) 	Display the ename, total salary and hiredate of all the employees whose salary is greater than twice their commission. Format the hiredate to look like 15th of         January 1998.
+
+SELECT ENAME, SAL+NVL(COMM,0) AS TOTALSAL, 
+TO_CHAR(HIREDATE, 'DDTH') || ' OF' || TO_CHAR(HIREDATE,' MONTH YYYY')
+FROM EMP
+WHERE SAL > 2* NVL(COMM, 0)
+
+6)	Display the employee details and the hiredate as Jan 31, 98.
+
+SELECT EMP.*, TO_CHAR(HIREDATE, 'MON DD, YY')
+FROM EMP;
+
+
+
+7)	Write the query which produces the following output.
+                  SCOTT EARNS 2000 PER MONTH BUT WANTS 4000
+
+SELECT ENAME || ' EARNS ' || SAL || ' PER MONTHS BUT WANTS ' || 2*SAL
+FROM EMP;
+
+8)	Display the details of all the salesman having an exp ranging from 2 to 40 years by considering first 1 year is training period.
+
+SELECT EMP.*, (MONTHS_BETWEEN(SYSDATE, HIREDATE)/12)-1 AS EXP
+FROM EMP
+WHERE (MONTHS_BETWEEN(SYSDATE, HIREDATE)/12)-1 BETWEEN 2 AND 40;
+
+
+9)	Display current date, yesterdays date, tomorrows date.
+
+SELECT SYSDATE TODAY, SYSDATE-1 YESTERDAY,SYSDATE+1 TOMORROW FROM DUAL;
+
+
+10)	Display current date, add 5 hours to current date and convert it to 24 DEC 2019 15:30:30 PM.
+
+
+SELECT SYSDATE, TO_CHAR(SYSDATE+5/24, 'DD MON YYYY HH24:MI:SS AM.') 
+FROM DUAL;
+
+
+11)	List the emps along with their Exp and whose Daily Sal is more than Rs.100.
+
+SELECT EMP.*, MONTHS_BETWEEN(SYSDATE, HIREDATE)/12 AS EXP
+FROM EMP
+WHERE SAL > 100;
+
+
+12)	List the emps whose Salary is more than 3000 after giving 20% increment
+
+SELECT ENAME,SAL, SAL+0.2*SAL INCREASED_SAL
+FROM EMP
+WHERE SAL > 3000;
+
+13)	List all emps joined on 1 May, 1981 using TO_DATE function.
+
+SELECT *
+FROM EMP
+WHERE HIREDATE = TO_DATE('1 MAY, 1981', 'DD MON, YYYY');
+
+
+14)	List the emps who joined in 2nd half of 1981.
+
+SELECT * 
+FROM EMP
+WHERE HIREDATE BETWEEN '15-JUN-1981' AND '31-DEC-1981';
+
+OR
+
+SELECT *
+FROM EMP
+WHERE TO_CHAR(HIREDATE, 'Q') IN (3,4) AND TO_CHAR(HIREDATE, 'YYYY')= 1981;
+
+
+15)	List the emps who are working as clerks and exp is more than 8 Years.
+
+
+SELECT *
+FROM EMP
+WHERE JOB='CLERK' AND MONTHS_BETWEEN(SYSDATE, HIREDATE)/12 > 8;
+
+
+16)	Display the ename left justified using 25 spaces.
+
+
+SELECT RPAD(ENAME, 25, ' ') FROM EMP;
+
+17)	Display the ename right justified using 25 spaces.
+
+SELECT LPAD(ENAME, 25, ' ') FROM EMP;
+
+18)	Display the character position of ‘A’ in employee name and the character position of 2nd occurrence of ‘C’ in name starting at position 1 onwards.
+
+SELECT INSTR(ENAME, 'A'), INSTR(ENAME,'C',1, 2) 
+FROM EMP;
+
+
+19)	Remove any occurrence of ‘A’ on the left of the employee name.
+
+
+SELECT LTRIM(ENAME,'A')
+FROM EMP;
+
+20)	Find all the employees hired during 1983.
+
+
+SELECT * FROM EMP
+WHERE TO_CHAR(HIREDATE, 'YYYY') = 1983;
+
+21)	Find all the employees who have ‘TH’ or ‘TL’ in their names.
+
+SELECT * FROM EMP
+WHERE ENAME LIKE '%TH%' OR ENAME LIKE '%TL%';
+
+22)	Find out the position of 2nd ‘a’ in the string ‘akakerakaikafakaia’ 
+starting from 5.
+
+SELECT INSTR('AKAKERAKAIKAFAKAIA','A',5,2) FROM DUAL;
+
+23)	To display all the odd numbers from salary And also the odd date (dd) from the hiredate.
+
+SELECT SAL , HIREDATE
+FROM EMP
+WHERE MOD(SAL,2) =1 AND MOD(TO_CHAR(HIREDATE,'DD'),2) =1;
+
+24)	To display the dates of all the Friday in the week of the date of joining.
+
+SELECT NEXT_DAY(HIREDATE,'FRI') FROM EMP;
+
+
+25)	To display the date when the date of joining is added with the date (dd) 
+of joining
+
+
+SELECT HIREDATE, HIREDATE+TO_CHAR(HIREDATE,'DD') FROM EMP;
+
+

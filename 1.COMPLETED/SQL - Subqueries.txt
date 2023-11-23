@@ -1,0 +1,211 @@
+
+~~~~~~~~~~SUBQUERIES~~~~~~~~~~
+1.Display the details of employees whose salary more than james salary and less than kings salary 
+but should not equal to sal of miller and adams in the descending order of salary.
+
+SELECT *
+FROM EMP
+WHERE SAL > (SELECT SAL FROM EMP WHERE ENAME = 'JAMES') 
+AND SAL < (SELECT SAL FROM EMP WHERE ENAME = 'KING')
+AND SAL NOT IN (SELECT SAL FROM EMP WHERE ENAME IN ( 'MILLER', 'ADAMS'))
+ORDER BY SAL DESC ;
+
+  
+2.Display the jobs that are same as the jobs of employees of newyork 
+but don't display newyork's jobs.
+
+
+**QUESTION NOT CLEAR
+SELECT JOB
+FROM EMP
+WHERE JOB IN (SELECT JOB FROM EMP 
+WHERE DEPTNO IN (SELECT DEPTNO FROM DEPT WHERE LOC='NEW YORK'));
+
+
+
+3.Display all grade 2,3 employees belongs to the department of King.
+
+SELECT *
+FROM EMP E, SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL AND
+S.GRADE IN (2,3) AND DEPTNO IN (SELECT DEPTNO FROM EMP WHERE ENAME='KING');
+
+
+4.Display the details of highest paid employees.
+
+SELECT *
+FROM EMP
+WHERE SAL IN (SELECT MAX(SAL) FROM EMP);
+
+
+5.Display the details of highest paid employee of accounting department.
+
+
+SELECT * FROM EMP
+WHERE SAL IN (SELECT MAX(SAL) FROM EMP 
+WHERE DEPTNO = (SELECT DEPTNO FROM DEPT WHERE DNAME='ACCOUNTING'));
+
+
+
+6.Display the highest salary of accounting department.
+
+SELECT sal FROM EMP
+WHERE SAL IN (SELECT MAX(SAL) FROM EMP 
+WHERE DEPTNO = (SELECT DEPTNO FROM DEPT WHERE DNAME='ACCOUNTING'));
+
+7.Display the details of highest paid employee of grade 3.
+
+select * from emp
+where sal in (select max(sal) from emp e, salgrade s 
+where s.grade = 3 and e.sal between s.losal and s.hisal);
+
+
+8.Display the details of senior most employee of grade 4.
+
+select * from emp
+where hiredate = (select min(hiredate) from emp e, salgrade s
+where e.sal between s.losal and s.hisal and s.grade = 4);
+
+
+9.Display the details of senior most employee of accounting department.
+
+
+select * from emp
+where hiredate = (select min(hiredate) from emp e, dept d
+where e.deptno = d.deptno and d.dname = 'ACCOUNTING');
+
+
+10.Display the details of all employees of Research department 
+except lowest paid employee of that department.
+
+select * from emp E,DEPT D
+where E.DEPTNO = D.DEPTNO AND  d.dname = 'RESEARCH' AND SAL NOT IN  (SELECT MIN(SAL) FROM EMP 
+WHERE DEPTNO = (SELECT DEPTNO FROM DEPT WHERE DNAME='RESEARCH'));
+
+
+
+11.Display the details of senior most employee who is manager to other.
+
+SELECT * FROM EMP
+WHERE HIREDATE = (SELECT MIN(M.HIREDATE) FROM EMP E, EMP M
+WHERE E.MGR = M.EMPNO);
+
+12.Display the details of lowest paid grade 4 employees.
+
+SELECT * FROM EMP
+WHERE SAL IN (SELECT MIN(SAL) FROM EMP E, SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL AND S.GRADE = 4);
+
+
+13.Display lowest paid employee of each job group.
+
+SELECT *
+FROM EMP 
+WHERE (SAL,DEPTNO) in (SELECT MIN(SAL),DEPTNO FROM EMP GROUP BY DEPTNO);
+
+
+
+14.Find out employees who joined 5th in company based in hiredate.
+
+SELECT ROWNUM, ENAME FROM (SELECT * FROM EMP 
+ORDER BY HIREDATE)
+GROUP BY ROWNUM, ENAME
+HAVING ROWNUM = 5;
+
+
+15.Find out top paid employee with annual salary.
+
+SELECT EMP.*,SAL*12 ANNUALSAL
+FROM EMP
+WHERE SAL IN (SELECT MAX(SAL) FROM EMP); 
+
+16.Display department wise first joined employee based on the job.
+
+
+SELECT *
+FROM EMP E , DEPT D 
+WHERE E.HIREDATE IN (SELECT  MIN(HIREDATE) FROM EMP GROUP BY DEPTNO)
+AND E.DEPTNO = D.DEPTNO;
+
+17.Display all odd rows.
+
+SELECT * FROM EMP WHERE ENAME IN (SELECT ENAME
+FROM EMP
+GROUP BY ROWNUM, ENAME
+HAVING MOD(ROWNUM,2) = 1);
+
+
+18.Display all even rows.
+
+SELECT * FROM EMP WHERE ENAME IN (SELECT ENAME
+FROM EMP
+GROUP BY ROWNUM, ENAME
+HAVING MOD(ROWNUM,2) = 0);
+
+19.Display the departments where there are atleast 2 grade 1,2 employees.
+
+SELECT DNAME FROM DEPT WHERE DEPTNO IN (SELECT DEPTNO FROM 
+EMP E , SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL 
+AND S.GRADE IN (1,2)
+GROUP BY DEPTNO
+HAVING COUNT(*) >=2);
+
+20.Display the department that has highest number of employees
+
+SELECT DNAME 
+FROM DEPT 
+WHERE DEPTNO IN (
+SELECT DEPTNO 
+FROM EMP 
+GROUP BY DEPTNO
+Having COUNT(*) = (SELECT MAX(COUNT(*) )
+FROM EMP 
+GROUP BY DEPTNO));
+
+OR
+
+SELECT DEPTNO 
+FROM (SELECT DEPTNO, COUNT(*) FROM EMP GROUP BY DEPTNO 
+ORDER BY COUNT(*) DESC)
+GROUP BY ROWNUM, DEPTNO
+HAVING ROWNUM = 1;
+
+
+21.Display details of the departments 
+where there are employees with 2 'A''s in their ename.
+
+SELECT * FROM 
+DEPT 
+WHERE DEPTNO IN (
+SELECT DEPTNO
+FROM EMP 
+WHERE ENAME LIKE '%A%A%' 
+GROUP BY DEPTNO
+HAVING COUNT(*)  >0);
+
+
+22.Display departments where there are employees 
+joined in the month of december.
+
+
+SELECT * FROM 
+DEPT 
+WHERE DEPTNO IN (
+SELECT DEPTNO
+FROM EMP 
+WHERE TO_CHAR(HIREDATE,'MM') = 12
+GROUP BY DEPTNO
+HAVING COUNT(*)  >0);
+
+
+
+
+
+
+
+
+
+
+
+

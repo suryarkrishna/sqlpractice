@@ -1,0 +1,103 @@
+1)  Find employee name, his salary and comm.
+
+SELECT ENAME, SAL, NVL(COMM,0) FROM EMP;
+
+
+2)  Find employee name, his annual salary and comm.
+
+SELECT ENAME, SAL+NVL(COMM,0) ANNUALSAL , NVL(COMM,0) FROM EMP; 
+
+3)  Find the employee code and his name together
+
+SELECT EMPNO, ENAME FROM EMP;
+
+
+
+4)  Retrieve the records as specified below from the EMP table.
+    Employee                        works                        deptno
+    7369-scott                 works in department       10
+
+SELECT EMPNO || '-' || ENAME AS EMPLOYEE,
+'WORKS IN DEPARTMENT' AS WORKS,
+DEPTNO
+FROM EMP;
+
+5)  Find the employee number, name, monthly salary (sal+comm.).
+
+SELECT EMPNO, ENAME, SAL+NVL(COMM,0) AS MONTHLY_SAL
+FROM EMP;
+
+
+6)  Repeat the question with NVL.
+
+SELECT EMPNO, ENAME, SAL+NVL(COMM,0) AS MONTHLY_SAL
+FROM EMP;
+
+
+7)  Find all the department numbers.
+
+SELECT DEPTNO FROM EMP;
+
+8)  Find distinct departments numbers from EMP.
+SELECT DISTINCT(DEPTNO) FROM EMP;
+
+
+9)  Find distinct deptno and job.
+
+SELECT DISTINCT DEPTNO, JOB FROM EMP;
+10)	Find empname, annual salary and deptno in the ascending order of ename.
+
+SELECT ENAME, (SAL+NVL(COMM,0))*12 ANNUAL_SAL , DEPTNO 
+FROM EMP
+ORDER BY ENAME ASC;
+
+11)	Find empname, job, hiredate in the descending order of hiredate.
+
+SELECT ENAME, JOB, HIREDATE
+FROM EMP
+ORDER BY HIREDATE DESC;
+
+
+12) 	Find the deptno, job and his name in the ascending order of deptno and desc of job.
+
+SELECT DEPTNO, JOB, ENAME
+ FROM EMP
+ ORDER BY DEPTNO, JOB DESC;
+
+
+~~~~~~~~~~BASIC SQL STATEMENTS~~~~~~~~~~
+1.Display employee details in the order of their hiredate.
+
+SELECT * FROM EMP ORDER BY HIREDATE;
+
+2.Display employee details in descending order of their experience.
+
+SELECT EMP.*, TRUNC(MONTHS_BETWEEN(SYSDATE,HIREDATE)/12,2) AS EXP 
+FROM EMP
+ORDER BY EXP DESC;
+
+3.Display department number, job, employee number, name from employee table in the ascending order of department number and descending order of job.
+
+SELECT DEPTNO, JOB, EMPNO, ENAME
+FROM EMP
+ORDER BY DEPTNO, JOB DESC;
+
+4.Display all the departments with job combination.
+
+SELECT DEPTNO, JOB FROM EMP;
+
+
+5.Display employee name, number, total number of years of experience in the ascending order of department number and descending order of experience.
+
+SELECT ENAME, EMPNO,TRUNC(MONTHS_BETWEEN(SYSDATE,HIREDATE)/12,2) AS EXP 
+FROM EMP
+ORDER BY EXP DESC;
+
+6.Write a query to display employee number, name, job, salary per month, comm per month, salary per day, comm per day, salary per year, comm per year, gross salary per year 
+  in the ascending order of job, gross salary and descending order of monthly salary.
+
+SELECT EMPNO, ENAME, JOB, SAL MONSAL, 
+NVL(COMM,0), SAL/30, NVL(COMM,0)/30, 
+SAL*12, NVL(COMM,0)*12, (SAL+NVL(COMM,0))*12 GROSS_SAL
+FROM EMP
+ORDER BY JOB, GROSS_SAL, MONSAL DESC;

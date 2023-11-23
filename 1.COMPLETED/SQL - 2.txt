@@ -1,0 +1,182 @@
+﻿
+13)	 Find the employee details name, his number, his job, deptno of all clerks.
+
+SELECT ENAME, EMPNO, JOB, DEPTNO
+FROM EMP
+WHERE JOB='CLERK';
+
+
+14)	 Find the department details for all the whose deptno>20
+
+SELECT * FROM EMP
+WHERE DEPTNO > 20;
+
+
+15)	 Find the empno, name, salary and comm. where Sal>comm.
+
+SELECT EMPNO, ENAME, SAL, NVL(COMM,0)
+FROM EMP
+WHERE SAL > NVL(COMM,0);
+
+
+16)	 Find ename, empno, sal of employee earning between 1000 and 2000.
+
+SELECT ENAME, EMPNO, SAL
+FROM EMP
+WHERE SAL BETWEEN 1000 AND 2000;
+
+
+
+17)	 Find EMP details (name, number, sal and mgr of employees working under the managers with mgr 7902 or 7566 or 7788.
+
+SELECT ENAME, EMPNO, SAL, MGR
+FROM EMP
+WHERE MGR IN (7902,7566,7788);
+
+
+18)	Find the emp names whose name starts with ‘S’
+
+SELECT ENAME FROM EMP
+WHERE ENAME LIKE 'S%';
+
+
+19)	Find the EMP name of size 4.
+SELECT ENAME FROM EMP
+WHERE LENGTH(ENAME) = 4;
+
+
+20)	Find the employees not working under any managers.
+
+SELECT * FROM EMP
+WHERE MGR IS NULL;
+
+
+21)	Find the employees who are not working between 1000 and 2000 salary.
+
+SELECT * FROM EMP
+WHERE SAL NOT BETWEEN 1000 AND 2000;
+
+
+22)	Find all the employees who are not managers.
+
+SELECT * FROM EMP
+WHERE JOB != 'MANAGER';
+
+
+23)	Find all the managers who are working under some manager.
+
+SELECT * FROM EMP 
+WHERE MGR IS NOT NULL;
+
+
+
+24)	Find the EMP details like name,number, job, salary earning between 1000 and 2000 and who are also clerk
+
+SELECT ENAME, EMPNO, JOB, SAL
+FROM EMP
+WHERE SAL BETWEEN 1000 AND 2000 AND JOB = 'CLERK';
+
+
+25)	Find the emp details like name.number,job,salary who are either earning between 1000  and 2000 or job=’clerk’
+
+SELECT ENAME, EMPNO, JOB, SAL
+FROM EMP
+WHERE SAL BETWEEN 1000 AND 2000 OR JOB = 'CLERK';
+
+
+
+
+26)	Find all the employees who are all managers and earn above 1500 
+
+SELECT * FROM EMP
+WHERE JOB='MANAGER' AND SAL>1500;
+
+27)	Find all the mangers and salesman with salaries over 1500.
+
+SELECT * FROM EMP 
+WHERE JOB IN ('MANAGER', 'SALESMAN') AND SAL>1500;
+
+
+
+28)	Find all the information from the salary grade.
+
+SELECT * FROM SAL_GRADE;
+
+
+
+29)	Find the employee and the department they are working in the ascending order of deptno.
+
+SELECT E.ENAME,D.DNAME 
+FROM  EMP E, DEPT D WHERE E.DEPTNO = D.DEPTNO 
+ORDER BY D.DEPTNO ASC;
+
+30)	Find all the different types of jobs.
+
+SELECT DISTINCT JOB FROM EMP;
+
+
+31)	Find all the employees working in deptno 10 or 20 in the alphabet order of name.
+
+SELECT * FROM EMP
+WHERE DEPTNO IN (10,20) 
+ORDER BY ENAME;
+
+
+32)	Find all the details of the clerks of deptno 20
+SELECT * FROM EMP
+WHERE JOB='CLERK' AND DEPTNO=20;
+
+
+33)	Find all the employees who have ‘TH’ or ‘TL’ in their names.
+
+SELECT * FROM EMP
+WHERE ENAME LIKE '%TH%' OR ENAME LIKE '%TL%';
+
+
+34)	Find all the employee names and their annual salary.
+
+SELECT EMP.* , SAL*12 AS ANNUAL_SAL FROM EMP;
+
+
+35)	Find all the employees hired during 1983.
+
+SELECT * FROM EMP
+WHERE TO_CHAR(HIREDATE,'YYYY')=1983;
+
+
+36)	Find all the employee names their annual salary of all sales people whose monthly salary >comm. the output should be ordered by salary highest first of two more employees 
+have the same salary sort by their names with the highest salary in order.
+
+SELECT EMP.*, SAL*12 ANNUALSAL
+FROM EMP
+WHERE DEPT=20 AND SAL > NVL(COMM,0)
+ORDER BY SAL DESC, ENAME;
+
+
+37)	Find all the employees details in the following format.
+
+Who                                           what                                         when
+SMITH                          HELD POSITION OF CLERK IN DEPT 20                                      SINCE 13-JUN-83
+
+SELECT ENAME WHO, 'HELD POSITION OF ' || JOB || 'IN DEPT ' || DEPTNO AS WHAT, 'SINCE ' || HIREDATE AS WHEN
+FROM EMP;
+
+
+38)	Find the ename, deptno and annual salary where the job of the employee is entered by user at runtime.
+
+SELECT ENAME, DEPTNO, SAL*12 ANNUALSAL 
+FROM EMP
+WHERE JOB = '&JOB';
+
+
+39)	Repeat the same query using the ‘&&’ command.
+
+SELECT ENAME, DEPTNO, SAL*12 ANNUALSAL 
+FROM EMP
+WHERE JOB = '&&JOB';
+ 
+
+40)	Find the annual salary and find the ename,job and the annsal salary in the decreasing order by the annsal
+
+SELECT SAL*12 ANNUALSAL, ENAME, JOB FROM EMP ORDER BY ANNUALSAL DESC;
+

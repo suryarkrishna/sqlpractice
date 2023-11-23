@@ -1,0 +1,108 @@
+﻿41)	Display the department name and string ‘HELLO’ in lower case.
+ ---------------------select concat(lower(dname),lower('    HELLO')) from dept;
+
+
+42)	Display the ename in upper case and the job in lower case.
+--------------------- select upper(ename),lower(job) from emp;
+
+
+43)	Display the employee name with initial letter in capital.
+---------------------select initcap(ename) from emp;
+
+
+44)	Display the empno, ename together using concat.
+----------------------------- select concat(ename,empno) from emp;
+
+
+45)	Display the ename left justified using 25 spaces.
+---------------------- select rpad(ename,25,' ') from emp;
+
+
+46)	Display the ename right justified using 25 spaces.
+
+-------------------------select lpad(ename,25,' ') from emp;
+
+47)	Display the employee name from 2nd letter onwards and the job the five characters from 2nd position onwards.
+-------------------------- select substr(ename,2),substr(job,2,5) from emp;
+
+
+48)	Display the character position of ‘A’ in employee name and the character position of 2nd occurrence of ‘C’ 
+in name starting at position 1 onwards.-------------------------select instr(ename,'A'), instr(ename,'C',1,2) from emp;
+
+
+49)	Remove any occurrence of ‘A’ on the left of the employee name.
+
+
+ --------------------select ename,ltrim(ename,'A') from emp;
+
+50)	Remove any occurrence of ‘G’ on the right of the department name.
+------------------------ select dname,rtrim(dname,'G') from dept;
+
+
+51)	Find the length of the character of ename.
+---------------------- select ename,length(ename) from emp;
+
+
+52)	Change every occurrence of ‘C’ in the department name to ’P’.
+--------------------- select dname,replace(dname,'C','P') from dept;
+
+
+53)	Change every occurrence of ‘C’ to ‘P’ and ‘I’ to ‘T’ in dname.
+ -------------------select dname,translate(dname,'CI','PT') from dept
+
+
+54)	Change every occurrence of job from salesman to salesman.
+ --------------select job,replace(job,'SALESMAN','salesman') from emp;
+
+
+55)	Find the number of times the character ’S’ occurs in the deptname.
+ ---------------------select dname,length(dname)-length(replace(dname,'S','')) from dept;
+ ---------------------select dname,regexp_count(dname,'S') from dept;
+
+
+
+
+~~~~~~~~~~CHARACTER FUNCTIONS~~~~~~~~~~
+1.Display the details of employees whose name ends with H.
+
+SELECT * FROM EMP
+WHERE ENAME LIKE '%S';
+
+2.Display the details of employees who are hired in the month of MAY irrespective of the year.
+
+SELECT * 
+FROM EMP
+WHERE TO_CHAR(HIREDATE,'MON') = 'MAY';
+
+
+3.Display the employee details whose name starts with S and has 5 characters.
+
+SELECT *
+FROM EMP
+WHERE ENAME LIKE 'S____';
+
+
+
+4.Display the details of the employees whose name start with C and has salary greater than 2400 and whose job name starts with M.
+
+SELECT * 
+FROM EMP
+WHERE ENAME LIKE 'C%' AND SAL > 2400 AND JOB LIKE 'M%';
+
+
+5.Display the details of employees whose job name has 7 characters and joined in the year 1981 and having commission greater than 500.
+
+SELECT * 
+FROM EMP
+WHERE JOB LIKE '_______' AND TO_CHAR(HIREDATE ='1981' AND NVL(COMM,0) > 500;
+
+6.Display employee names having character 'A' after second position more than 2 times.
+
+SELECT * FROM EMP
+WHERE ENAME LIKE '_%A%A%';
+
+7.Display all the salaries of employees with fixed size format of 8 characters.
+
+SELECT TO_CHAR(SAL,'9,999.99')
+FROM EMP;
+

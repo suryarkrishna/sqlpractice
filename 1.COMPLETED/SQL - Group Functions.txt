@@ -1,0 +1,87 @@
+1)	Calculate the job and the average salary for each of different job.
+SELECT JOB, AVG(SAL)
+FROM EMP 
+GROUP BY JOB;
+
+2)	Display the average monthly salary bill for each job type with in a department.
+
+SELECT AVG(SAL), JOB, DEPTNO
+FROM EMP
+GROUP BY JOB, DEPTNO
+ORDER BY DEPTNO;
+
+
+3)	Find the maximum salary of each job.
+
+SELECT MAX(SAL), JOB 
+FROM EMP
+GROUP BY JOB;
+
+
+4)	Find the minimum salary of each department.
+
+SELECT MIN(SAL) FROM EMP
+GROUP BY DEPTNO;
+
+
+
+
+5)	Find average salary for all department having more than 3 employees
+
+SELECT AVG(SAL) FROM EMP 
+WHERE DEPTNO IN (SELECT DEPTNO FROM EMP
+GROUP BY DEPTNO HAVING COUNT(DEPTNO) > 3);
+
+6)	Find all the jobs where the maximum salary of greater or equal to 3000.
+
+SELECT JOB
+FROM EMP
+WHERE SAL IN (SELECT MAX(SAL) 
+FROM EMP
+GROUP BY JOB 
+HAVING MAX(SAL) >=3000);
+
+
+
+7)	Find the department and the average salary of each department if it is greater than 2000.
+
+SELECT DEPTNO, AVG(SAL)
+FROM EMP
+GROUP BY DEPTNO
+HAVING AVG(SAL)>2000;
+
+
+8)	Find the minimum salary of all the employees.
+
+SELECT MIN(SAL) FROM EMP;
+
+
+9)	Find the maximum, minimum and average salary of all employees.
+
+SELECT MAX(SAL), MIN(SAL), AVG(SAL) FROM EMP;
+
+
+10)	Find the maximum, minimum and average salary for each job type.
+
+SELECT MAX(SAL), MIN(SAL), AVG(SAL) FROM EMP GROUP BY JOB;
+
+
+11)	Find how many managers are there in the employee table.
+
+SELECT COUNT(EMPNO)
+FROM EMP 
+WHERE JOB='MANAGER';
+
+
+12)	Find out the difference of the highest and lowest salary.
+
+SELECT MAX(SAL)-MIN(SAL) FROM EMP;
+
+
+13)	Find the departments having more than 3 employees.
+
+SELECT DEPTNO
+FROM EMP
+GROUP BY DEPTNO
+HAVING COUNT(DEPTNO) > 3;
+

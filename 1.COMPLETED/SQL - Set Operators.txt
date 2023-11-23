@@ -1,0 +1,180 @@
+~~~~~~~~~~JOINS, GROUP FUNCTIONS~~~~~~~~~~
+1.Display department wise, average salary 
+where average salary ranging between 1000-3000.
+
+
+SELECT AVG(SAL) FROM EMP 
+GROUP BY DEPTNO
+HAVING AVG(SAL) BETWEEN 1000 AND 3000;
+
+OR
+
+WITH AVG_TABLE(SAL, DEPT) AS 
+(SELECT AVG(SAL), DEPTNO FROM EMP GROUP BY DEPTNO)
+SELECT SAL, DEPT FROM AVG_TABLE WHERE SAL BETWEEN  1000 AND 3000;
+
+
+2.Display grade wise, location wise, count of employees where count of employees =2.
+
+
+SELECT COUNT(*), D.LOC, S.GRADE
+FROM EMP E , DEPT D , SALGRADE S
+WHERE E.DEPTNO = D.DEPTNO AND E.SAL BETWEEN S.LOSAL AND S.HISAL
+GROUP BY D.LOC, S.GRADE
+ORDER BY D.LOC;
+
+3.Display department name wise, job wise, sum of annual salary 
+where annual salary between 20000 to 40000 for year 1980,81,82.
+
+SELECT SUM(SAL), DNAME, JOB
+FROM EMP E, DEPT D 
+WHERE E.DEPTNO = D.DEPTNO AND SAL*12 BETWEEN 20000 AND 40000
+AND TO_CHAR(HIREDATE,'YY') IN (80,81,82)
+GROUP BY D.DNAME, E.JOB;
+
+
+4.Display location wise, count of employees, 
+average salaries for location new york, chicago and dallas.
+
+SELECT COUNT(*), D.LOC, AVG(SAL)
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO AND D.LOC IN ('NEW YORK', 'CHICAGO', 'DALLAS')
+GROUP BY D.LOC;
+
+5.Display year wise count of employees where count is more than 3.
+
+SELECT COUNT(*) FROM
+EMP 
+GROUP BY TO_CHAR(HIREDATE,'YYYY')
+HAVING COUNT(*) > 3;
+
+6.Display mgr wise sum of all mgr salaries 
+whose sum of employee salaries ranging between 3000 to 30000.
+
+SELECT SUM(M.SAL)
+FROM EMP E, EMP M
+WHERE E.MGR = M.EMPNO
+GROUP BY E.MGR
+HAVING SUM(M.SAL) BETWEEN 3000 AND 30000;
+
+7.Display month wise employees joined in every department.
+
+SELECT * FROM 
+EMP 
+ORDER BY ( TO_CHAR(HIREDATE,'MM')), DEPTNO;
+
+
+8.Display department number wise, 
+department name wise, grade wise, job wise mgrs 
+where mgrs name has atleast one 'A' in it.
+
+SELECT  E.DEPTNO, D.DNAME, S.GRADE, E.JOB
+FROM EMP E,EMP M, DEPT D, SALGRADE S
+WHERE E.DEPTNO = D.DEPTNO AND M.SAL BETWEEN S.LOSAL AND S.HISAL
+AND E.MGR = M.EMPNO AND M.ENAME LIKE '%A%'
+GROUP BY E.DEPTNO, D.DNAME, S.GRADE, E.JOB ;
+
+
+
+9.Display department, sum of salaries for those employees 
+who are not managers.
+
+SELECT DEPTNO, SUM(SAL)
+FROM EMP
+WHERE JOB <> 'MANAGER'
+GROUP BY DEPTNO;
+
+
+
+~~~~~~~~~~SET OPERATORS~~~~~~~~~~
+1.Display details of all employees whose salaries are same 
+as any of the following:
+  -The salary of all employee who are working as managers.
+  -Salaries of all clerks who are first level managers.
+  -The commission of all salesman of sales department
+ belongs to grade 1,2,3.
+  -One third of salary of 1st level of mgr of grade 4,5.
+
+
+SELECT * FROM EMP 
+WHERE SAL IN (SELECT SAL FROM EMP WHERE JOB = 'MANAGER')
+UNION
+SELECT * FROM EMP
+WHERE SAL IN (SELECT M.SAL FROM EMP E, EMP M
+ WHERE M.JOB = 'CLERK' AND E.MGR = M.EMPNO)
+UNION
+SELECT * FROM EMP,
+WHERE SAL IN (SELECT SUM(NVL(COMM, 0)) FROM EMP E, DEPT D, SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL AND E.DEPTNO = D.DEPTNO
+AND E.JOB='SALESMAN' 
+AND D.DNAME='SALES'
+AND S.GRADE IN (1,2,3))
+UNION
+SELECT * FROM EMP 
+WHERE SAL IN (SELECT (1/3)*M.SAL FROM EMP E, EMP M, SALGRADE S
+ WHERE M.JOB = 'CLERK' AND E.MGR = M.EMPNO AND M.SAL BETWEEN S.LOSAL AND S.HISAL
+AND S.GRADE IN (4,5));
+
+
+
+2.Display all the jobs available with department 10 and 20 
+but not with the sales department.
+
+
+SELECT JOB FROM EMP
+WHERE DEPTNO = 10
+UNION
+SELECT JOB FROM EMP
+WHERE DEPTNO = 20
+MINUS
+SELECT JOB FROM EMP
+WHERE DEPTNO = (SELECT DEPT FROM DEPTNO WHERE DNAME='SALES');
+
+
+
+
+3.Find the job that filled in the first half of 1983 and 
+the same job that has hired during the same period in 1984.
+
+
+
+SELECT JOB
+FROM EMP
+WHERE TO_CHAR(HIREDATE,'YY') = 82 
+AND TO_CHAR(HIREDATE,'Q') IN (1,2)
+INTERSECT
+SELECT JOB
+FROM EMP
+WHERE TO_CHAR(HIREDATE,'YY') = 83
+AND TO_CHAR(HIREDATE,'Q') IN (1,2);
+
+
+OR
+
+SELECT JOB 
+FROM EMP
+WHERE JOB IN (SELECT JOB FROM EMP
+WHERE TO_CHAR(HIREDATE,'YY') = 82 
+AND TO_CHAR(HIREDATE,'Q') IN (1,2)) AND TO_CHAR(HIREDATE,'YY') = 83
+AND TO_CHAR(HIREDATE,'Q') IN (1,2);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

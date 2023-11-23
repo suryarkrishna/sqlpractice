@@ -1,0 +1,252 @@
+1. Display all employee details ACCCOUNTING AND RESEARCH department with having sal between 1000 and 5000
+
+SELECT 
+	*
+FROM
+	EMP E, DEPT D
+WHERE 
+	E.DEPTNO = D.DEPTNO
+AND 
+	D.DNAME IN ('ACCOUNTING', 'RESEARCH')
+AND 
+	E.SAL BETWEEN 1000 AND 5000;
+
+
+
+2. Display all employees of Grade 3 to 5 and working in location NEW YORK and CHICAGO
+
+SELECT 
+	*
+FROM
+	EMP E,
+	DEPT D,
+	SAL_GRADE S
+WHERE 	
+	E.DEPTNO = D.DEPTNO 
+	AND E.SAL BETWEEN S.LOSAL AND S.HISAL
+	AND S.GRADE IN (	
+			3, 4, 5
+			) 
+	AND D.LOC IN (
+			'NEW YORK',
+			'CHICAGO'
+			);
+
+
+3. Display all employees whose job is Manager and Experience is more than 30 years not belongs to grade 1
+
+
+SELECT 
+	*
+FROM 
+	EMP E,
+	SAL_GRADE S
+WHERE 
+	E.SAL BETWEEN S.LOSAL AND S.HISAL
+	AND JOB = 'MANAGER'
+	AND MONTHS_BETWEEN(SYSDATE, HIREDATE)/12 > 30
+	AND S.GRADE != 1;
+
+
+
+4. Display distinct Jobs of Grade 3
+
+SELECT DISTINCT JOBS
+FROM EMP E , SAL_GRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL AND S.GRADE = 3;
+
+5. Display all employee details with their manager name where employees grade is 2 to 5 
+but his manager grade must be between 3 and 5.
+
+SELECT E1.*,S1.GRADE, E2.ENAME AS MGR_NAME, S2.GRADE
+FROM EMP E1,EMP E2, SAL_GRADE S1, SAL_GRADE S2
+WHERE E1.SAL BETWEEN S1.LOSAL AND S1.HISAL 
+AND E1.MGR = E2.EMPNO AND E2.SAL BETWEEN S2.LOSAL AND S2.HISAL
+AND S1.GRADE BETWEEN 2 AND 5 AND S2.GRADE BETWEEN 3 AND 5;
+
+OR
+
+
+select * from emp e,salgrade s
+where e.sal between s.losal and s.hisal and grade between 2 and 5 and
+mgr in(select empno from emp e,salgrade s where e.sal between s.losal and s.hisal 
+and s.grade between 3 and 5);
+
+OR
+
+**
+SELECT E.*,M.ENAME,
+(SELECT GRADE FROM SALGRADE WHERE E.SAL BETWEEN LOSAL AND HISAL)AS EMPGRADE,
+(SELECT GRADE FROM SALGRADE WHERE M.SAL BETWEEN LOSAL AND HISAL)AS MGRGRADE 
+FROM EMP E, EMP M WHERE E.MGR=M.EMPNO
+AND E.SAL BETWEEN (SELECT LOSAL FROM SALGRADE WHERE GRADE = 2) 
+AND (SELECT HISAL FROM SALGRADE WHERE GRADE = 5)
+AND M.SAL BETWEEN (SELECT LOSAL FROM SALGRADE WHERE GRADE = 3) 
+AND (SELECT HISAL FROM SALGRADE WHERE GRADE = 5);
+
+	
+
+6. Display all employee details with their manager name where employees grade is 3 to 4 
+but his manager grade must be between 3 and 4 and working for accounting, sales departments only.
+
+SELECT E.*, M.ENAME FROM EMP E, EMP M
+WHERE E.MGR = M.EMPNO
+AND 
+E.SAL BETWEEN (SELECT LOSAL FROM SAL_GRADE WHERE GRADE=3) AND (SELECT HISAL FROM SAL_GRADE WHERE GRADE = 4)
+AND 
+M.SAL NOT BETWEEN (SELECT LOSAL FROM SAL_GRADE WHERE GRADE =3) AND (SELECT HISAL FROM SAL_GRADE WHERE GRADE=4)
+AND 
+M.DEPTNO IN (SELECT DEPTNO FROM DEPT WHERE DNAME IN ('ACCOUNTING', 'SALES'));
+
+
+7. Display the name, location and the department of employees whose salary is greater than 1500.
+
+
+SELECT E.ENAME, D.LOC, D.DNAME
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO
+AND E.SAL > 1500;
+
+
+
+
+8. Display all the employees staying in Dallas.
+
+
+SELECT 
+	*
+FROM 	
+	EMP E,
+	DEPT D
+WHERE 
+	E.DEPTNO = D.DEPTNO
+AND 
+	D.LOC = 'DALLAS';
+
+
+
+
+9. Display ename, job, salary, grade and dname for everyone in the RESEARCH department 
+except clerks, sort on salary, displaying the highest salary.
+
+
+SELECT E.ENAME, E.JOB, E.SAL, S.GRADE, D.DNAME
+FROM EMP E, SAL_GRADE S, DEPT D
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL
+AND E.DEPTNO = D.DEPTNO
+AND D.DNAME = 'RESEARCH'
+AND E.JOB != 'CLERK' 
+ORDER BY E.SAL DESC;
+
+
+10. Display all employees who earn less than their managers.
+
+SELECT * FROM EMP E , EMP M 
+WHERE E.MGR = M.EMPNO
+AND E.SAL < M.SAL;
+
+11. Display all employees who earn more than their managers.
+
+SELECT * FROM EMP E , EMP M 
+WHERE E.MGR = M.EMPNO AND E.SAL > M.SAL;
+
+12. Find the department that has no employees.
+
+SELECT D.DNAME 
+FROM EMP E, DEPT D
+WHERE E.DEPTNO(+) = D.DEPTNO AND E.EMPNO IS NULL ;
+
+OR
+
+SELECT D.DNAME
+FROM DEPT D
+WHERE D.DNAME NOT IN (SELECT D.DNAME 
+FROM DEPT D, EMP E
+WHERE D.DEPTNO = E.DEPTNO);
+
+OR
+
+SELECT D.* FROM EMP E,DEPT D
+WHERE E.DEPTNO(+) = D.DEPTNO MINUS 
+SELECT D.* FROM EMP E,DEPT D
+WHERE E.DEPTNO = D.DEPTNO(+);
+
+13.Display the details all Managers of Accounting Department. 
+
+SELECT M.*
+FROM EMP E , EMP M, DEPT D
+WHERE E.MGR = M.EMPNO AND
+M.DEPTNO = D.DEPTNO
+AND M.DEPTNO IN (SELECT DEPTNO FROM DEPT WHERE DNAME ='ACCOUNTING');
+
+     
+
+14.Display all the Salesman of sales dept who are receiving some commision
+
+
+SELECT *
+FROM EMP 
+WHERE JOB='SALESMAN' AND DEPTNO = (SELECT DEPTNO FROM DEPT D WHERE DNAME='SALES') AND 
+COMM IS NOT NULL;
+
+    
+
+15.Display all managers and analysts of both Accounting and Reasearch Department who annual salary morethan 20000
+
+SELECT *
+FROM EMP
+WHERE JOB IN ('MANAGER', 'ANALYST') AND DEPTNO IN (SELECT DEPTNO FROM DEPT WHERE DNAME IN ('ACCOUNTING', 'RESEARCH'))
+AND SAL*12 > 20000;
+
+
+16.Display all 1981 and 1982 employees joined in Newyork and Chicago with salary morethan 1250 joined 
+under some manager.    
+
+
+SELECT *
+FROM EMP
+WHERE TO_CHAR(HIREDATE,'YYYY') IN (1981, 1982) AND 
+DEPTNO IN (SELECT DEPTNO FROM DEPT WHERE LOC IN ('NEW YORK', 'CHICAGO')) AND
+SAL > 1250 AND MGR IS NOT NULL;
+
+
+
+
+
+17.Display grade of Adams.
+
+
+SELECT S.GRADE
+FROM EMP E, SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL
+AND ENAME = 'ADAMS';
+
+
+18.Display all grade 2 Salesman.
+
+
+
+SELECT  * FROM
+EMP E , SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL
+AND S.GRADE = 2 AND E.JOB = 'SALESMAN';
+
+
+19.Display all grade 4 & 5 managers working under some manager having an experience not less thean 35 years.
+
+SELECT * 
+FROM EMP E , SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL
+AND MGR IS NOT NULL AND S.GRADE IN (4,5) AND
+MONTHS_BETWEEN(SYSDATE,HIREDATE)/12 > 35;
+
+
+20.Display the details of employees belongs to New York working as Managers beloging to grade 4 & 5.
+
+SELECT *
+FROM EMP E, DEPT D, SALGRADE S
+WHERE E.DEPTNO = D.DEPTNO AND E.SAL BETWEEN S.LOSAL AND S.HISAL
+AND D.LOC = 'NEW YORK' AND E.JOB = 'MANAGER' AND S.GRADE IN (4,5);
+
+
+

@@ -1,0 +1,67 @@
+1)	Display ename, just salary if more than 1500,if exactly 1500 display on target, if less than 1500 display below 1500. 
+
+
+SELECT ENAME, SAL, 
+CASE 
+    WHEN SAL > 1500 THEN 'MORE THAN 1500'
+    WHEN SAL = 1500 THEN '1500'
+    WHEN SAL < 1500 THEN 'LESS THAN 1500'
+END AS TARGET
+FROM EMP;
+
+2)	Display the ename, hiredate and also the paydate. Paydate is computed as follows
+Employee hired on or hired before the 15th of any month are paid on the last Friday of that month. Those hired after the 15th are paid on the first Friday of the following month. 
+
+SELECT ENAME, HIREDATE, 
+CASE
+	WHEN TO_CHAR(HIREDATE,'DD') <=15  THEN NEXT_DAY(LAST_DAY(HIREDATE)-7, 'FRI')
+	WHEN TO_CHAR(HIREDATE,'DD') > 15  THEN NEXT_DAY(LAST_DAY(HIREDATE)+1,'FRI')
+END AS PAYDATE
+FROM EMP;
+
+
+
+3)	Display ename,deptno,monthly salary and adjusted monthly salary as 
+                              Department       -                 Raise by
+                10                                         5%
+                11                                         7%  
+
+SELECT ENAME, DEPTNO, SAL, 
+CASE 
+	WHEN DEPTNO=10 THEN SAL+SAL*0.05 
+	WHEN DEPTNO=11 THEN SAL+SAL*0.07
+    ELSE SAL
+END AS ADJUSTED_SAL
+FROM EMP;
+
+4) Display complete info of employees and to change job from present designation to new one.
+	OLD		NEW
+	CLERK		MANAGER
+	MANAGER		SR.MANAGER
+	SALESMAN	SR.SALESMAN     
+
+SELECT EMP.*, 
+CASE JOB
+WHEN 'CLERK' THEN 'MANAGER'
+WHEN 'MANAGER' THEN 'SR.MANAGER'
+WHEN 'SALESMAN' THEN 'SR.SALESMAN'
+ELSE JOB
+END AS NEW_JOB
+FROM EMP;
+
+
+
+5) Display complete info of employees and to change their salary as follows
+	RANGE		INCREMENT
+	1000-1250	500
+	1251-2500	600
+	2500-4999	1000
+
+SELECT EMP.*,
+CASE 
+WHEN SAL BETWEEN 1000 AND 1250 THEN SAL+500
+WHEN SAL BETWEEN 1251 AND 2500 THEN SAL+600
+WHEN SAL BETWEEN 2500 AND 4999 THEN SAL+1000
+ELSE SAL
+END AS INCRE
+FROM EMP;

@@ -1,0 +1,150 @@
+~~~~~~~~~~DML~~~~~~~~~~
+1.Change the name of the employee james to upper case.
+
+UPDATE EMP
+SET ENAME= UPPER(ENAME)
+WHERE ENAME = 'JAMES';
+
+
+2.Increment the salaries of all employees by 20%.
+
+UPDATE EMP
+SET SAL = SAL+0.2*SAL;
+
+
+3.Transfer all the clerks of department 20 to 10 by incrementing the salary with 500 and changing their manager to 7839. 
+
+UPDATE EMP
+SET DEPTNO = 10 AND SAL = SAL+500 AND MGR=7839
+WHERE DEPTNO = 20 AND JOB='CLERK';
+
+4.Replace the century component where ever it is 20 to 19.
+
+UPDATE EMP
+SET HIREDATE = TO_DATE(
+REPLACE(TO_CHAR(HIREDATE,'CC'),20, 19) 
+|| TO_CHAR(HIREDATE,'YY-') 
+|| TO_CHAR(HIREDATE,'DD-MM'),'YYYY-DD-MM');
+
+
+5.Increment the salaries of all grade 3 employees by 10%. 
+UPDATE EMP
+SET SAL = SAL + 0.1*SAL
+WHERE EMPNO IN (SELECT EMPNO FROM EMP,SAL_GRADE
+WHERE EMP.SAL BETWEEN SAL_GRADE.LOSAL AND SAL_GRADE.HISAL
+AND GRADE = 3);
+
+
+6.Transfer all clerks of research department to sales department by incrementing the salary 10%.
+
+
+UPDATE EMP
+SET SAL = SAL + 0.1 * SAL, DEPTNO = (SELECT DEPTNO FROM DEPT WHERE DNAME='SALES')
+WHERE JOB = 'CLERK' AND DEPTNO = (SELECT DEPTNO FROM EMP WHERE DNAME='RESEARCH');
+
+
+7.Replace the lowest paid employees salary with average salary of employee table which is rounded to nearest rupee.
+
+UPDATE EMP
+SET SAL = (SELECT ROUND(AVG(SAL)) FROM EMP)
+WHERE SAL = (SELECT MIN(SAL) FROM EMP);
+
+
+8.Replace salaries of all the employees of department 10 with the average salary of department 10 itself wherever employees are receiving less than average salary 
+ of department 10 itself.
+
+UPDATE EMP
+SET SAL = (SELECT AVG(SAL) FROM EMP E WHERE DEPTNO = 10)
+WHERE SAL < (SELECT AVG(SAL) FROM EMP E WHERE DEPTNO = 10);
+
+9.Replace the salary of highest paid employee of grade 2 with lowest paid employee of grade 3.
+
+UPDATE EMP
+SET SAL = (SELECT MIN(SAL) FROM EMP E1, SAL_GRADE S1
+WHERE E1.SAL BETWEEN S1.LOSAL AND S1.HISAL 
+AND GRADE = 3)
+WHERE SAL = (SELECT MAX(SAL) FROM EMP E, SAL_GRADE S 
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL 
+AND S.GRADE = 2 );
+
+10.Replace the salaries of all the employees whose salary is less than the average salary of their own grade with the average salary of their own grade.
+
+
+UPDATE EMP E1
+SET E1.SAL = (SELECT AVG(SAL) FROM EMP E2,SAL_GRADE S2 WHERE E1.SAL BETWEEN S2.LOSAL AND S2.HIGHSAL)
+WHERE E1.SAL < (SELECT AVG(SAL) FROM EMP E2,SAL_GRADE S2 WHERE E1.SAL BETWEEN S2.LOSAL AND S2.HIGHSAL);
+
+
+11.Delete the record of blake.
+
+DELETE FROM EMP WHERE ENAME = 'BLAKE';
+
+
+12.Delete all the employees working under the manager 7839 except jones.
+
+DELETE FROM EMP
+WHERE MGR = 7839 AND ENAME != 'JONES';
+
+13.Delete all the employees belongs to second and fourth quarter of 1981 and 1983 joined under manager 7566.
+
+DELETE FROM EMP
+WHERE TO_CHAR(HIREDATE,'Q') IN (2,4) AND TO_CHAR(HIREDATE,'YYYY') IN (1981, 1983) AND MGR = 7566;
+
+14.Delete all employees of sales department working as salesman.
+
+DELETE FROM EMP
+WHERE EMPNO IN (SELECT EMPNO FROM EMP E, DEPT D WHERE E.DEPTNO = D.DEPTNO AND E.JOB='SALESMAN' AND D.DNAME = 'SALES');
+
+15.Delete all grade 3 employees working as clerks.
+
+DELETE FROM EMP
+WHERE JOB = 'CLERK' AND EMPNO IN (SELECT EMPNO FROM EMP E, SAL_GRADE S WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL AND S.GRADE = 3);
+
+
+
+16.Delete all employees working as managers to others with annual salary ranging from 2400 to 42000.
+
+DELETE FROM EMP
+WHERE JOB = 'MANAGER' AND SAL*12 BETWEEN 2400 AND 42000;
+
+
+
+17.Delete all employees working for the department where blake's manager is working.
+
+DELETE FROM EMP 
+WHERE EMPNO IN (SELECT EMPNO FROM EMP E , DEPT D WHERE D.DEPTNO = E.DEPTNO AND D.DNAME IN (SELECT DNAME FROM EMP E , DEPT D WHERE E.DEPTNO = D.DEPTNO AND E.ENAME ='BLAKE' AND E.JOB='MANAGER'));
+
+18.Delete the details of all the employees whose salary is less than average salary of all the employees.
+
+DELETE FROM EMP
+WHERE SAL < (SELECT AVG(SAL) FROM EMP);
+
+
+19.Delete those employees where less than 4 employees are working for their department.
+
+
+DELETE FROM EMP
+WHERE DEPTNO IN (SELECT DEPTNO
+FROM EMP 
+GROUP BY DEPTNO
+HAVING COUNT(DEPTNO) < 4) ;
+
+20.Delete the details of employees who belongs to department where minimum number of employees are working.
+
+DELETE FROM EMP
+WHERE DEPTNO IN 
+(SELECT DEPTNO FROM EMP 
+GROUP BY DEPTNO 
+HAVING COUNT(DEPTNO) 
+= (SELECT MIN(COUNT(DEPTNO)) FROM EMP GROUP BY DEPTNO));
+
+
+21.Delete all employees whose salary is less than the average salary of their own department.
+
+DELETE FROM EMP
+WHERE EMPNO IN 
+(SELECT EMPNO FROM EMP E1 
+WHERE SAL < (SELECT AVG(SAL) FROM EMP E2 WHERE E2.DEPTNO = E1.DEPTNO ));
+
+22.Delete all emplpoyees.
+DELETE FROM EMP;
